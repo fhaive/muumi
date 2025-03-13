@@ -1,0 +1,17 @@
+Package: muumi
+Title: An R package for statistical and network-based meta-analysis for MUlti-omics data Integration
+Version: 0.0.0.9000
+Authors@R: c(
+    person("Simo", "Inkala", role="aut"),
+    person("Michele", "Fratello", email="michele.fratello@tuni.fi", role="aut"),
+    person("Giusy", "del Giudice", email="giusy.delgiudice@tuni.fi", role="aut"),
+    person("Giorgia", "Migliaccio", email="giorgia.migliaccio@tuni.fi", role="aut"),
+    person("Angela", "Serra", email="angela.serra@tuni.fi", role="aut"),
+    person("Dario", "Greco", email="dario.greco@tuni.fi", role="aut"),
+    person("Antonio", "Federico", email="antonio.federico@tuni.fi", role=c("cre", "aut"))
+    )
+Description: MUUMI is an R package that integrates statistical meta-analysis and network-based data fusion to extract robust molecular signatures from omics data. It supports the integration of single- and multi-omics datasets, overcoming platform heterogeneity and batch effects. By combining multiple meta-analytic methods with similarity network fusion and molecular interactome inference, MUUMI enables comprehensive biological interpretation.
+License: GPL-3
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.1
