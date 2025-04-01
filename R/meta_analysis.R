@@ -299,7 +299,7 @@ compute_gsea <- function(gene_list, gmt_file, no_permutations=10000){
                         #maxSize = 600,
                         nperm = no_permutations)
   
-  topPathways <- fgRes[head(order(fgRes$pval), n = 15), pathway]
+  topPathways <- fgRes[head(order(fgRes$pval), n = 15), "pathway"]
   
   
   print(fgsea::plotGseaTable(pathways = mypath[topPathways], stats = ranked_gene_list, fgseaRes = fgRes, gseaParam = 0.5))
