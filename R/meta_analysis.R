@@ -28,8 +28,7 @@ multi_studies_adjust <- function(expr_mat, samples_label, batch_labels){
   df_pca <- prcomp(table_transpose, center = TRUE, scale. = TRUE)
   p<-ggplot(as.data.frame(df_pca$x), aes(x=PC1, y=PC2, color=batch_labels))
   p <- p+geom_point(size=3)+guides(color = guide_legend(title = "Batch labels"))+
-    ggtitle("Before batch correction")+ 
-    geom_point(size=5)+
+    ggtitle("Before batch correction")+
     theme_bw()+
     theme(legend.key.size = unit(5, 'cm'), #change legend key size
           legend.key.height = unit(1, 'cm'), #change legend key height
@@ -46,8 +45,7 @@ multi_studies_adjust <- function(expr_mat, samples_label, batch_labels){
   df_pca2 <- prcomp(table_transpose2, center = TRUE, scale. = TRUE)
   p2<-ggplot(as.data.frame(df_pca2$x), aes(x=PC1, y=PC2, color=batch_labels))
   p2 <- p2+geom_point(size=3)+ guides(color = guide_legend(title = "Batch labels"))+
-    ggtitle("After batch correction") +
-    geom_point(size=5)+
+    ggtitle("After batch correction")+
     theme_bw()+
     theme(legend.key.size = unit(5, 'cm'), #change legend key size
           legend.key.height = unit(1, 'cm'), #change legend key height
@@ -91,7 +89,6 @@ calc_effect_size_rank<- function(meta_dataframe) {
   #colnames(meta_data_pval)<-colnames(meta_dataframe)[index_pval]
   #heatmap(as.matrix(meta_data_pval))
   tmp_data<-meta_dataframe
-  row.names(tmp_data)<-NULL
   pval<-as.vector(rowMeans(tmp_data))
   tmp <- data.frame(
     pval = pval,
@@ -179,7 +176,7 @@ calc_rank_base_rank <- function(meta_dataframe, class, origin){
   #origin contains the  labels for different studies
   #origin <- gsub(pattern = "_adj_pval",colnames(meta_data_adpval),replacement = "")
   #origin <- gsub("\\_.*","",origin)
-  o<- rep(1,dim(meta_data_adpval)[2])
+  o <- origin
   RP_advance_out <- RankProd::RP.advance(data = meta_data_adpval, cl = class, origin = o, calculateProduct =T)
   #ranked  final list
   ranks_based_pvalues<-as.data.frame(RP_advance_out$pval)
