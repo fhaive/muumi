@@ -214,55 +214,35 @@ calc_rank_base_rank <- function(meta_dataframe, class, origin){
 #' run_ensembl_metanalysis(meta_dataframe)
 #' }
 #' @export
-run_ensembl_metanalysis <- function(meta_dataframe, method=c("effect_size", "pvalue", "rank_product"), class, origin, metric="median"){
-  if (length(method)<2){stop("Error: choose at least two methods among effect size, pvalue and rank product!")}
-  if (all(method %in% c("effect_size", "pvalue", "rank_product"))){
-    es <- calc_effect_size_rank(meta_dataframe = meta_dataframe)
-    pval <- calc_pvalue_based_rank(meta_dataframe = meta_dataframe)
-    rankprod <- calc_rank_base_rank(meta_dataframe = meta_dataframe, class = class, origin = origin)
-    data<-list()
-    data[[1]]<-rownames(es)
-    data[[2]]<-rownames(pval)
-    data[[3]]<-rownames(rankprod)
-    names(data)<-c('Effect_size','Fisher_test','Rank_Prod')
-    outputBorda<-TopKLists::Borda(data)
-    if(metric=="median"){
-      final_ranked_genes_median<-as.data.frame(outputBorda$TopK$median)
-    }else if(metric=="mean"){
-      final_ranked_genes_mean<-as.data.frame(outputBorda$TopK$mean)
-    }
-    return(final_ranked_genes_median)
-  }else if(all(method %in% c("effect_size", "pvalue"))){
-    es <- calc_effect_size_rank(meta_dataframe = meta_dataframe)
-    pval <- calc_pvalue_based_rank(meta_dataframe = meta_dataframe)
-    data<-list()
-    data[[1]]<-rownames(es)
-    data[[2]]<-rownames(pval)
-    names(data)<-c('Effect_size','Fisher_test')
-    outputBorda<-TopKLists::Borda(data)
-  }else if(all(method %in% c("effect_size", "rank_product"))){
-    es <- calc_effect_size_rank(meta_dataframe = meta_dataframe)
-    rankprod <- calc_rank_base_rank_subsets(meta_dataframe = metadf, class = class, origin = origin)
-    data<-list()
-    data[[1]]<-rownames(es)
-    data[[2]]<-rownames(rankprod)
-    names(data)<-c('Effect_size','Rank_Prod')
-    outputBorda<-TopKLists::Borda(data)
-  }else if(all(method %in% c("pval", "rank_product"))){
-    pval <- calc_pvalue_based_rank(meta_dataframe = meta_dataframe)
-    rankprod <- calc_rank_base_rank_subsets(meta_dataframe = metadf, class = class, origin = origin)
-    data<-list()
-    data[[1]]<-rownames(pval)
-    data[[2]]<-rownames(rankprod)
-    names(data)<-c('Fisher_test','Rank_Prod')
-    outputBorda<-TopKLists::Borda(data)
+run_ensembl_metanalysis <- function(meta_dataframe, method = c("effect_size", "pvalue", "rank_product"), class, origin, metric = "median") {
+  if (length(method) < 2) {
+    stop("Error: choose at least two methods among effect size, pvalue and rank product!")
   }
-  if(metric=="median"){
-    final_ranked_genes_median<-as.data.frame(outputBorda$TopK$median)
-  }else if(metric=="mean"){
-    final_ranked_genes_mean<-as.data.frame(outputBorda$TopK$mean)
+  
+  data <- list()
+  
+  if ("effect_size" %in% method) {
+    es <- calc_effect_size_rank(meta_dataframe)
+    data[['Effect_size']] <- rownames(es)
   }
-  return(final_ranked_genes_median)
+  if ("pvalue" %in% method) {
+    pval <- calc_pvalue_based_rank(meta_dataframe)
+    data[['Fisher_test']] <- rownames(pval)
+  }
+  if ("rank_product" %in% method) {
+    rankprod <- calc_rank_base_rank(meta_dataframe, class, origin)
+    data[['Rank_Prod']] <- rownames(rankprod)
+  }
+  
+  outputBorda <- TopKLists::Borda(data)
+  
+  result <- switch(metric,
+                   "median" = as.data.frame(outputBorda$TopK$median),
+                   "mean" = as.data.frame(outputBorda$TopK$mean),
+                   stop("Unknown metric specified.")
+  )
+  
+  return(result)
 }
 
 
