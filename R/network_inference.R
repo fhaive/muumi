@@ -471,14 +471,14 @@ annotate_iGraph <- function(iG){
     igraph::vertex_attr(iIG, name="color") <- "lightgray"
   }
   if(!("highlightcolor" %in% vertex_attr_list)){
-    igraph::vertex_attr(iIG, name="highlightcolor") <- "darkgray"
+    igraph::vertex_attr(iG, name="highlightcolor") <- "darkgray"
   }
   
   if(!("color" %in% edge_attr_list)){
-    igraph::edge_attr(iIG, name="color") <- "lightgray"
+    igraph::edge_attr(iG, name="color") <- "lightgray"
   }
   if(!("highlightcolor" %in% edge_attr_list)){
-    igraph::edge_attr(iIG, name="highlightcolor") <- "darkgray"
+    igraph::edge_attr(iG, name="highlightcolor") <- "darkgray"
   }
   
   #print(igraph::list.vertex.attributes(iG))
