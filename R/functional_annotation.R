@@ -102,7 +102,7 @@ get_bubbleplot_from_pathways <- function(modules, geneID="SYMBOL") {
     for(mod in 1:length(modules)){
       x <- names(members[members == mod])  # Get gene names for the current module
       if(length(x) > 10) {
-        convgenes <- clusterProfiler::bitr(x, fromType=geneID, toType="ENTREZID", OrgDb="org.Hs.eg.db")
+        convgenes <- clusterProfiler::bitr(x, fromType=geneID, toType="ENTREZID", OrgDb=org.Hs.eg.db)
         print(head(convgenes))
         lst[[mod]] <- convgenes$ENTREZID  # Store ENTREZIDs in the list
       }
@@ -121,7 +121,7 @@ get_bubbleplot_from_pathways <- function(modules, geneID="SYMBOL") {
     for(mod in 1:length(unique(modules))){
       x <- names(members[members == mod])  # Get gene names for the current module
       if(length(x) > 10) {
-        convgenes <- clusterProfiler::bitr(x, fromType=geneID, toType="ENTREZID", OrgDb="org.Hs.eg.db")
+        convgenes <- clusterProfiler::bitr(x, fromType=geneID, toType="ENTREZID", OrgDb=org.Hs.eg.db)
         print(head(convgenes))
         lst[[mod]] <- convgenes$ENTREZID  # Store ENTREZIDs in the list
       }
