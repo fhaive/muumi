@@ -168,11 +168,6 @@ calc_rank_base_rank <- function(meta_dataframe, class, origin){
   index_pval_adj <- which(grepl('_adj_pval',colnames(meta_dataframe)))
   meta_data_adpval <- as.data.frame(meta_dataframe[,index_pval_adj])
   colnames(meta_data_adpval) <- colnames(meta_dataframe)[index_pval_adj]
-  cl <- rep.int(1,times = length(colnames(meta_data_adpval)))
-  rp.advance.input <- meta_data_adpval
-  colnames(rp.advance.input) <- NULL
-  rownames(rp.advance.input) <- NULL
-  rp.advance.input <- as.matrix(rp.advance.input)
   #origin contains the  labels for different studies
   #origin <- gsub(pattern = "_adj_pval",colnames(meta_data_adpval),replacement = "")
   #origin <- gsub("\\_.*","",origin)
@@ -188,8 +183,6 @@ calc_rank_base_rank <- function(meta_dataframe, class, origin){
   borda_list[[2]]<-rank_2
   outputBorda<-Borda(borda_list)
   output_borda<-outputBorda$TopK$mean
-  output_borda<-as.data.frame(output_borda)
-  rownames(output_borda)<-output_borda$output_borda
   return(output_borda)
 }
 
@@ -276,12 +269,8 @@ compute_gsea <- function(gene_list, gmt_file, no_permutations=10000){
                         #maxSize = 600,
                         nperm = no_permutations)
   
-  topPathways <- fgRes[head(order(fgRes$pval), n = 15), "pathway"]
-  
-  
+  topPathways <- head(fgRes$pathway[order(fgRes$pval)], 15)
   print(fgsea::plotGseaTable(pathways = mypath[topPathways], stats = ranked_gene_list, fgseaRes = fgRes, gseaParam = 0.5))
-  
-  #, pathwayLabelStyle = list(size = 15), valueStyle = list(size = 20), axisLabelStyle = list(size = 20), colwidths = c(5, 3, 0.8, 1.2, 1.2))
   return(fgRes)
 }
 
@@ -346,19 +335,6 @@ compute_gsea_thresh <- function(geneList, fgsea_res, background){
     #diff <- (max(tops) - min(bottoms))/8
     
     max_vec <- c(max_vec, which(names(ranked_gene_list) %in% names(gseaRes$tops)[which(gseaRes$tops==max(gseaRes$tops))]))
-    #all_vec <- names(geneList)[which(names(geneList) %in% names(gseaRes$bottoms))]
-    #x = y = NULL
-    # g <- ggplot(toPlot, aes(x = x, y = y)) + geom_point(color = "green",
-    #                                                     size = 0.1) + geom_hline(yintercept = max(toPlot$y), colour = "red",
-    #                                                                              linetype = "dashed") + geom_hline(yintercept = min(bottoms),
-    #                                                                                                                colour = "red", linetype = "dashed") + geom_hline(yintercept = 0,
-    #                                                                                                                                                                  colour = "black") + geom_line(color = "green") + theme_bw() +
-    #   geom_segment(data = data.frame(x = pathway), mapping = aes(x = x,
-    #                                                              y = -diff/2, xend = x, yend = diff/2), size = ticksSize) +
-    #   theme(panel.border = element_blank(), panel.grid.minor = element_blank()) +
-    #   labs(x = "rank", y = "enrichment score") + geom_vline(xintercept = toPlot[which(toPlot$y==max(toPlot$y)),"x"], colour = "red",
-    #                                                         linetype = "dashed")
-    # g
   }
   
   median_max_vec<-median(max_vec)
