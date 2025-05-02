@@ -29,7 +29,9 @@ matrixStats >= 0.59.0
 metafor >= 3.0-2 
 metap >= 1.5 
 minet >= 3.44.1 
-nmfbin >= 0.2.1 
+nmfbin >= 0.2.1
+org.Hs.eg.db >= 3.10.0
+pamr >= 1.56.1
 parallel >= 3.6.3 
 plyr >= 1.8.4 
 RankProd >= 3.12.0 
@@ -38,8 +40,6 @@ reshape2 >= 1.4.3
 SNFtool >= 2.3.1 
 stringr >= 1.4.0 
 tidyr >= 1.1.2
-pamr >= 1.56.1
-org.Hs.eg.db >= 3.10.0
 TopKLists >= 1.0.7
 ```
 
