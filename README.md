@@ -37,7 +37,9 @@ ReactomePA >= 1.30.0
 reshape2 >= 1.4.3 
 SNFtool >= 2.3.1 
 stringr >= 1.4.0 
-tidyr >= 1.1.2 
+tidyr >= 1.1.2
+pamr >= 1.56.1
+org.Hs.eg.db >= 3.10.0
 TopKLists >= 1.0.7
 ```
 
