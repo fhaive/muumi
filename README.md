@@ -4,7 +4,7 @@ MUUMI is an R package that integrates statistical meta-analysis and network-base
 It supports the integration of single- and multi-omics datasets, overcoming platform heterogeneity and batch effects.
 By combining multiple meta-analytic methods with similarity network fusion and molecular interactome inference, MUUMI enables comprehensive biological interpretation.
 
-![Architecture Diagram](docs/img/1 - Figure main.png)
+![Architecture Diagram](docs/img/Figure_main.png)
 
 The package implements the methods and algorithms described in the following scientific publication:
 
