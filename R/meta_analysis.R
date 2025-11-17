@@ -24,41 +24,60 @@ multi_studies_adjust <- function(expr_mat, samples_label, batch_labels){
   mylist <- list(x=as.matrix(expr_mat), y=as.factor(samples_label), batchlabels=as.factor(batch_labels))
   adjusted_mat <- pamr::pamr.batchadjust(data = mylist)
   
-  table_transpose<-as.data.frame(t(expr_mat))
+  # PCA before correction
+  table_transpose <- as.data.frame(t(expr_mat))               # samples x features
   df_pca <- prcomp(table_transpose, center = TRUE, scale. = TRUE)
-  p<-ggplot(as.data.frame(df_pca$x), aes(x=PC1, y=PC2, color=batch_labels))
-  p <- p+geom_point(size=3)+guides(color = guide_legend(title = "Batch labels"))+
-    ggtitle("Before batch correction")+
-    theme_bw()+
-    theme(legend.key.size = unit(5, 'cm'), #change legend key size
-          legend.key.height = unit(1, 'cm'), #change legend key height
-          legend.key.width = unit(1, 'cm'), #change legend key width
-          legend.title = element_text(size=16, face="bold"), #change legend title font size
-          legend.text = element_text(size=15),
+  var_pct1 <- 100 * (df_pca$sdev^2) / sum(df_pca$sdev^2)
+  xlab1 <- sprintf("PC1 (%.1f%%)", var_pct1[1])
+  ylab1 <- sprintf("PC2 (%.1f%%)", var_pct1[2])
+  
+  p_df <- as.data.frame(df_pca$x)
+  p_df$batch_labels <- batch_labels
+  
+  p <- ggplot(p_df, aes(x = PC1, y = PC2, color = batch_labels)) +
+    geom_point(size = 3) +
+    guides(color = guide_legend(title = "Batch labels")) +
+    ggtitle("Before batch correction") +
+    labs(x = xlab1, y = ylab1) +
+    theme_bw() +
+    theme(legend.key.size = unit(5, 'cm'),
+          legend.key.height = unit(1, 'cm'),
+          legend.key.width = unit(1, 'cm'),
+          legend.title = element_text(size = 16, face = "bold"),
+          legend.text = element_text(size = 15),
           plot.title = element_text(size = 20, face = "bold"),
-          axis.text.x = element_text(color = "grey20", size=14),
+          axis.text.x = element_text(color = "grey20", size = 14),
           axis.text.y = element_text(color = "grey20", size = 14),
-          axis.title=element_text(size=14,face="bold"))
+          axis.title = element_text(size = 14, face = "bold"))
   
-  
-  table_transpose2<-as.data.frame(t(adjusted_mat$x))
+  # PCA after correction
+  table_transpose2 <- as.data.frame(t(adjusted_mat$x))
   df_pca2 <- prcomp(table_transpose2, center = TRUE, scale. = TRUE)
-  p2<-ggplot(as.data.frame(df_pca2$x), aes(x=PC1, y=PC2, color=batch_labels))
-  p2 <- p2+geom_point(size=3)+ guides(color = guide_legend(title = "Batch labels"))+
-    ggtitle("After batch correction")+
-    theme_bw()+
-    theme(legend.key.size = unit(5, 'cm'), #change legend key size
-          legend.key.height = unit(1, 'cm'), #change legend key height
-          legend.key.width = unit(1, 'cm'), #change legend key width
-          legend.title = element_text( size=16, face="bold"), #change legend title font size
-          legend.text = element_text(size=15),
+  var_pct2 <- 100 * (df_pca2$sdev^2) / sum(df_pca2$sdev^2)
+  xlab2 <- sprintf("PC1 (%.1f%%)", var_pct2[1])
+  ylab2 <- sprintf("PC2 (%.1f%%)", var_pct2[2])
+  
+  p2_df <- as.data.frame(df_pca2$x)
+  p2_df$batch_labels <- batch_labels
+  
+  p2 <- ggplot(p2_df, aes(x = PC1, y = PC2, color = batch_labels)) +
+    geom_point(size = 3) +
+    guides(color = guide_legend(title = "Batch labels")) +
+    ggtitle("After batch correction") +
+    labs(x = xlab2, y = ylab2) +
+    theme_bw() +
+    theme(legend.key.size = unit(5, 'cm'),
+          legend.key.height = unit(1, 'cm'),
+          legend.key.width = unit(1, 'cm'),
+          legend.title = element_text(size = 16, face = "bold"),
+          legend.text = element_text(size = 15),
           plot.title = element_text(size = 20, face = "bold"),
-          axis.text.x = element_text(color = "grey20", size=14),
+          axis.text.x = element_text(color = "grey20", size = 14),
           axis.text.y = element_text(color = "grey20", size = 14),
-          axis.title=element_text(size=14,face="bold"))
+          axis.title = element_text(size = 14, face = "bold"))
   
   require(gridExtra)
-  grid.arrange(p, p2, ncol=2)
+  grid.arrange(p, p2, ncol = 2)
   
   return(adjusted_mat)
 }
