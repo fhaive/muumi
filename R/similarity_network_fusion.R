@@ -115,6 +115,22 @@ prune_snf_network <- function(snf_network, percentile_thr = 0.75) {
 #' rownames(snf_result) <- colnames(snf_result) <- paste0("Gene", 1:10)
 #' ranked_edges <- get_ranked_edge_list(snf_result)
 #' @export
+#' Generate a Ranked Edge List from an SNF Result Matrix
+#'
+#' This function generates a ranked edge list from an SNF (Similarity Network Fusion) result matrix.
+#' The edge list is derived from the upper triangle of the matrix, listing gene pairs and their similarity values.
+#' Only edges with positive similarity values are retained and ranked in descending order by similarity.
+#'
+#' @param snf_result A square, symmetric numeric matrix representing the SNF similarity network with named rows and columns.
+#' @return A named numeric vector where each element represents the similarity value between a gene pair, with names formatted as "gene1_gene2".
+#' The vector is ranked in descending order by similarity.
+#' @examples
+#' # Create an example SNF result matrix
+#' snf_result <- matrix(runif(100, min = 0, max = 1), nrow = 10)
+#' snf_result <- (snf_result + t(snf_result)) / 2  # Ensure symmetry
+#' rownames(snf_result) <- colnames(snf_result) <- paste0("Gene", 1:10)
+#' ranked_edges <- get_ranked_edge_list(snf_result)
+#' @export
 get_ranked_edge_list <- function(snf_result) {
   
   if (!is.matrix(snf_result)) {
@@ -146,7 +162,7 @@ get_ranked_edge_list <- function(snf_result) {
   edge_list <- edge_list[edge_list$similarity > 0, ]
   edge_list <- edge_list[order(-edge_list$similarity), ]
   edge_list_to_esea <- edge_list$similarity
-  names(edge_list_to_esea) <- paste(edge_list$gene1, edge_list$gene2, sep = "_")
+  names(edge_list_to_esea) <- paste(edge_list$gene1, edge_list$gene2, sep = "|")
   
   return(edge_list_to_esea)
 }
