@@ -1,26 +1,43 @@
 #' Batch-adjust and visualize multi-study expression data
 #'
-#' This function takes in an expression matrix, sample labels, and batch labels,
-#' performs batch effect adjustment using the pamr package, and visualizes the
-#' principal component analysis (PCA) before and after batch correction.
+#' This function takes in an expression matrix, sample labels, batch labels,
+#' and condition labels, performs batch effect adjustment using the pamr package,
+#' and visualizes the principal component analysis (PCA) before and after batch
+#' correction. In the PCA plots, samples are colored according to batch of origin
+#' and shaped according to biological condition (e.g. Healthy vs Disease).
 #' 
 #' @param expr_mat A dataframe with genes on the rows and samples in the columns.
-#' @param samples_label A factor of samples labels in the same order as the samples in expr_mat columns
-#' @param batch_labels A factor of labels indicating the batches (the studies where the samples are coming from) 
+#' @param samples_label A factor of sample class labels in the same order as the
+#'   samples in \code{expr_mat} columns. Used by \code{pamr.batchadjust}.
+#' @param batch_labels A factor of labels indicating the batches (i.e. the studies
+#'   where the samples are coming from), in the same order as the samples in
+#'   \code{expr_mat} columns.
+#' @param condition_labels A factor indicating the biological condition of each
+#'   sample (e.g. \code{"Healthy"} or \code{"Disease"}), in the same order as the
+#'   samples in \code{expr_mat} columns. Used to control point shapes in PCA plots.
 #' 
-#' @return A batch-adjusted expression matrix of the same dimension of expr_mat
+#' @return
+#' A list returned by \code{pamr::pamr.batchadjust}, containing a batch-adjusted
+#' expression matrix (\code{x}) with the same dimensions as \code{expr_mat}.
 #' 
 #' @importFrom pamr pamr.batchadjust
 #' @import ggplot2
 #' @importFrom gridExtra grid.arrange
 #' @importFrom stats prcomp
+#' 
 #' @examples
 #' \dontrun{
-#' # Example Usage:
-#' adjusted_data <- multi_studies_adjust(expr_mat=expr_mat, samples_label=samples_label, batch_labels=batch_labels)
+#' # Example usage:
+#' adjusted_data <- multi_studies_adjust(
+#'   expr_mat = expr_mat,
+#'   samples_label = samples_label,
+#'   batch_labels = batch_labels,
+#'   condition_labels = condition_labels
+#' )
 #' }
+#' 
 #' @export
-multi_studies_adjust <- function(expr_mat, samples_label, batch_labels){
+multi_studies_adjust <- function(expr_mat, samples_label, batch_labels, condition_labels){
   mylist <- list(x=as.matrix(expr_mat), y=as.factor(samples_label), batchlabels=as.factor(batch_labels))
   adjusted_mat <- pamr::pamr.batchadjust(data = mylist)
   
@@ -33,22 +50,34 @@ multi_studies_adjust <- function(expr_mat, samples_label, batch_labels){
   
   p_df <- as.data.frame(df_pca$x)
   p_df$batch_labels <- batch_labels
+  p_df$condition_labels <- condition_labels
   
-  p <- ggplot(p_df, aes(x = PC1, y = PC2, color = batch_labels)) +
+  p <- ggplot(
+    p_df,
+    aes(x = PC1, y = PC2, color = batch_labels, shape = condition_labels)
+  ) +
     geom_point(size = 3) +
-    guides(color = guide_legend(title = "Batch labels")) +
+    scale_shape_manual(
+      values = c("Healthy" = 15, "Disease" = 17)
+    ) +
+    guides(
+      color = guide_legend(title = "Batch labels"),
+      shape = guide_legend(title = "Sample type")
+    ) +
     ggtitle("Before batch correction") +
     labs(x = xlab1, y = ylab1) +
     theme_bw() +
-    theme(legend.key.size = unit(5, 'cm'),
-          legend.key.height = unit(1, 'cm'),
-          legend.key.width = unit(1, 'cm'),
-          legend.title = element_text(size = 16, face = "bold"),
-          legend.text = element_text(size = 15),
-          plot.title = element_text(size = 20, face = "bold"),
-          axis.text.x = element_text(color = "grey20", size = 14),
-          axis.text.y = element_text(color = "grey20", size = 14),
-          axis.title = element_text(size = 14, face = "bold"))
+    theme(
+      legend.key.size = unit(5, 'cm'),
+      legend.key.height = unit(1, 'cm'),
+      legend.key.width = unit(1, 'cm'),
+      legend.title = element_text(size = 16, face = "bold"),
+      legend.text = element_text(size = 15),
+      plot.title = element_text(size = 20, face = "bold"),
+      axis.text.x = element_text(color = "grey20", size = 14),
+      axis.text.y = element_text(color = "grey20", size = 14),
+      axis.title = element_text(size = 14, face = "bold")
+    )
   
   # PCA after correction
   table_transpose2 <- as.data.frame(t(adjusted_mat$x))
@@ -59,28 +88,41 @@ multi_studies_adjust <- function(expr_mat, samples_label, batch_labels){
   
   p2_df <- as.data.frame(df_pca2$x)
   p2_df$batch_labels <- batch_labels
+  p2_df$condition_labels <- condition_labels
   
-  p2 <- ggplot(p2_df, aes(x = PC1, y = PC2, color = batch_labels)) +
+  p2 <- ggplot(
+    p2_df,
+    aes(x = PC1, y = PC2, color = batch_labels, shape = condition_labels)
+  ) +
     geom_point(size = 3) +
-    guides(color = guide_legend(title = "Batch labels")) +
+    scale_shape_manual(
+      values = c("Healthy" = 15, "Disease" = 17)
+    ) +
+    guides(
+      color = guide_legend(title = "Batch labels"),
+      shape = guide_legend(title = "Sample type")
+    ) +
     ggtitle("After batch correction") +
-    labs(x = xlab2, y = ylab2) +
+    labs(x = xlab1, y = ylab1) +
     theme_bw() +
-    theme(legend.key.size = unit(5, 'cm'),
-          legend.key.height = unit(1, 'cm'),
-          legend.key.width = unit(1, 'cm'),
-          legend.title = element_text(size = 16, face = "bold"),
-          legend.text = element_text(size = 15),
-          plot.title = element_text(size = 20, face = "bold"),
-          axis.text.x = element_text(color = "grey20", size = 14),
-          axis.text.y = element_text(color = "grey20", size = 14),
-          axis.title = element_text(size = 14, face = "bold"))
+    theme(
+      legend.key.size = unit(5, 'cm'),
+      legend.key.height = unit(1, 'cm'),
+      legend.key.width = unit(1, 'cm'),
+      legend.title = element_text(size = 16, face = "bold"),
+      legend.text = element_text(size = 15),
+      plot.title = element_text(size = 20, face = "bold"),
+      axis.text.x = element_text(color = "grey20", size = 14),
+      axis.text.y = element_text(color = "grey20", size = 14),
+      axis.title = element_text(size = 14, face = "bold")
+    )
   
   require(gridExtra)
   grid.arrange(p, p2, ncol = 2)
   
   return(adjusted_mat)
 }
+
 
 
 #' Calculate and rank effect sizes from a meta-dataframe
